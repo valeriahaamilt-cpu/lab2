@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import Category, Team, Driver, Article, GrandPrix
+from .models import (
+    Category,
+    Team,
+    Driver,
+    Article,
+    GrandPrix,
+    GrandPrixComment,
+    NewsletterSubscriber,
+    GrandPrixRating,
+)
 
 
 @admin.register(Category)
@@ -38,3 +47,23 @@ class GrandPrixAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_filter = ("country", "is_upcoming")
     search_fields = ("name", "country", "city", "circuit")
+
+
+@admin.register(GrandPrixComment)
+class GrandPrixCommentAdmin(admin.ModelAdmin):
+    list_display = ("grand_prix", "name", "created_at", "updated_at")
+    list_filter = ("grand_prix",)
+    search_fields = ("name", "comment")
+
+
+@admin.register(NewsletterSubscriber)
+class NewsletterSubscriberAdmin(admin.ModelAdmin):
+    list_display = ("name", "email", "created_at", "updated_at")
+    search_fields = ("name", "email")
+
+
+@admin.register(GrandPrixRating)
+class GrandPrixRatingAdmin(admin.ModelAdmin):
+    list_display = ("grand_prix", "name", "score", "created_at", "updated_at")
+    list_filter = ("grand_prix", "score")
+    search_fields = ("name",)

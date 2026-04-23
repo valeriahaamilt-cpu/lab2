@@ -32,10 +32,85 @@
                 <p><strong>Ціна квитка:</strong> ${{ grand_prix.ticket_price }}</p>
             </div>
 
+            <div class="rating-box">
+                <h3>Середній рейтинг</h3>
+                {% if average_rating %}
+                    <p class="average-rating">{{ average_rating|floatformat:1 }} / 5</p>
+                {% else %}
+                    <p class="average-rating">Ще немає оцінок</p>
+                {% endif %}
+            </div>
+
             <button class="buy-ticket-btn" disabled>Купити квиток</button>
             <p class="buy-note">Кнопка неактивна, бо це лабораторна робота.</p>
         </div>
 
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container forms-grid">
+
+        <div class="form-card">
+            <h2>Залишити коментар</h2>
+
+            {% if comment_success %}
+                <p class="success-message">Коментар успішно додано.</p>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button type="submit" name="submit_comment" class="form-btn">Надіслати коментар</button>
+            </form>
+        </div>
+
+        <div class="form-card">
+            <h2>Оцінити Grand Prix</h2>
+
+            {% if rating_success %}
+                <p class="success-message">Оцінку збережено.</p>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                {{ rating_form.as_p }}
+                <button type="submit" name="submit_rating" class="form-btn">Надіслати оцінку</button>
+            </form>
+        </div>
+
+        <div class="form-card">
+            <h2>Підписка на новини</h2>
+
+            {% if newsletter_success %}
+                <p class="success-message">Ви успішно підписались на розсилку.</p>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+                {{ newsletter_form.as_p }}
+                <button type="submit" name="submit_newsletter" class="form-btn">Підписатись</button>
+            </form>
+        </div>
+
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container">
+        <h2>Коментарі</h2>
+
+        <div class="comments-list">
+            {% for comment in comments %}
+                <article class="comment-card">
+                    <h3>{{ comment.name }}</h3>
+                    <p>{{ comment.comment }}</p>
+                    <span>{{ comment.created_at }}</span>
+                </article>
+            {% empty %}
+                <p>Поки що коментарів немає.</p>
+            {% endfor %}
+        </div>
     </div>
 </section>
 

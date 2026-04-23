@@ -78,3 +78,40 @@ class GrandPrix(models.Model):
 
     def __str__(self):
         return self.name
+    
+class GrandPrixComment(models.Model):
+    grand_prix = models.ForeignKey(GrandPrix, on_delete=models.CASCADE, related_name="comments")
+    name = models.CharField(max_length=120)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.grand_prix.name}"
+
+
+class NewsletterSubscriber(models.Model):
+    name = models.CharField(max_length=120)
+    email = models.EmailField(unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.email
+
+
+class GrandPrixRating(models.Model):
+    grand_prix = models.ForeignKey(GrandPrix, on_delete=models.CASCADE, related_name="ratings")
+    name = models.CharField(max_length=120)
+    score = models.PositiveSmallIntegerField(choices=[
+        (1, "1"),
+        (2, "2"),
+        (3, "3"),
+        (4, "4"),
+        (5, "5"),
+    ])
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.grand_prix.name} - {self.score}"
