@@ -1,0 +1,42 @@
+{% extends "pages/base.html" %}
+
+{% block content %}
+
+<section class="category-hero">
+    <div class="container">
+        <span class="tag">GRAND PRIX</span>
+        <h1>{{ grand_prix.name }}</h1>
+        <p>{{ grand_prix.city }}, {{ grand_prix.country }} — {{ grand_prix.circuit }}</p>
+        <a href="{% url 'category_page' grand_prix.category.slug %}" class="back-link">Назад до категорії</a>
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container grand-prix-detail-layout">
+
+        <div class="grand-prix-detail-image">
+            {% if grand_prix.image_url %}
+                <img src="{{ grand_prix.image_url }}" alt="{{ grand_prix.name }}">
+            {% endif %}
+        </div>
+
+        <div class="grand-prix-detail-info">
+            <h2>{{ grand_prix.name }}</h2>
+
+            <div class="detail-card">
+                <p><strong>Країна:</strong> {{ grand_prix.country }}</p>
+                <p><strong>Місто:</strong> {{ grand_prix.city }}</p>
+                <p><strong>Траса:</strong> {{ grand_prix.circuit }}</p>
+                <p><strong>Початок:</strong> {{ grand_prix.start_date }}</p>
+                <p><strong>Кінець:</strong> {{ grand_prix.end_date }}</p>
+                <p><strong>Ціна квитка:</strong> ${{ grand_prix.ticket_price }}</p>
+            </div>
+
+            <button class="buy-ticket-btn" disabled>Купити квиток</button>
+            <p class="buy-note">Кнопка неактивна, бо це лабораторна робота.</p>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

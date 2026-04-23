@@ -553,3 +553,61 @@ main {
         grid-template-columns: 1fr;
     }
 }
+.event-card a {
+    display: block;
+    color: inherit;
+}
+
+.grand-prix-detail-layout {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.grand-prix-detail-image img {
+    width: 100%;
+    border-radius: 14px;
+    object-fit: cover;
+}
+
+.grand-prix-detail-info h2 {
+    font-size: 34px;
+    margin-top: 0;
+}
+
+.detail-card {
+    background: #000000;
+    border-radius: 14px;
+    padding: 22px;
+    margin: 20px 0;
+}
+
+.detail-card p {
+    margin: 10px 0;
+    color: #f1f1f1;
+}
+
+.buy-ticket-btn {
+    border: none;
+    padding: 14px 24px;
+    border-radius: 999px;
+    background: #e10600;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 900;
+    cursor: not-allowed;
+    opacity: 0.75;
+}
+
+.buy-note {
+    margin-top: 12px;
+    color: #bdbdc7;
+    font-size: 14px;
+}
+
+@media (max-width: 900px) {
+    .grand-prix-detail-layout {
+        grid-template-columns: 1fr;
+    }
+}

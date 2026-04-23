@@ -119,16 +119,18 @@
         <div class="event-grid">
             {% for event in grand_prix_events %}
                 <article class="event-card">
-                    {% if event.image_url %}
-                        <img src="{{ event.image_url }}" alt="{{ event.name }}">
-                    {% endif %}
+                    <a href="{% url 'grand_prix_detail' event.slug %}">
+                        {% if event.image_url %}
+                            <img src="{{ event.image_url }}" alt="{{ event.name }}">
+                        {% endif %}
 
-                    <div class="event-content">
-                        <span>{{ event.start_date }} — {{ event.end_date }}</span>
-                        <h3>{{ event.name }}</h3>
-                        <p>{{ event.city }}, {{ event.country }}</p>
-                        <strong>${{ event.ticket_price }}</strong>
-                    </div>
+                        <div class="event-content">
+                            <span>{{ event.start_date }} — {{ event.end_date }}</span>
+                            <h3>{{ event.name }}</h3>
+                            <p>{{ event.city }}, {{ event.country }}</p>
+                            <strong>${{ event.ticket_price }}</strong>
+                        </div>
+                    </a>
                 </article>
             {% empty %}
                 <p>Події ще не додані.</p>

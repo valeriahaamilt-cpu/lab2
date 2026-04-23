@@ -4,7 +4,6 @@ from .models import Category, Team, Driver, Article, GrandPrix
 
 def get_common_context():
     categories = Category.objects.all()
-
     return {
         "categories": categories,
     }
@@ -61,12 +60,23 @@ def category_page(request, slug):
     return render(request, "pages/category.html", context)
 
 
+def grand_prix_detail(request, slug):
+    grand_prix = get_object_or_404(GrandPrix, slug=slug)
+
+    context = get_common_context()
+    context.update({
+        "page_title": f"{grand_prix.name} - F1 Portal",
+        "grand_prix": grand_prix,
+    })
+
+    return render(request, "pages/grand_prix_detail.html", context)
+
+
 def about(request):
     context = get_common_context()
     context.update({
         "page_title": "About - F1 Portal",
     })
-
     return render(request, "pages/about.html", context)
 
 
@@ -75,5 +85,4 @@ def contact(request):
     context.update({
         "page_title": "Contact - F1 Portal",
     })
-
     return render(request, "pages/contact.html", context)
