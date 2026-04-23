@@ -1,10 +1,18 @@
-﻿<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>{{ title }}</title></head>
-<body>
-  <h1>{{ title }}</h1>
-  <p>{{ text }}</p>
+﻿{% extends "pages/base.html" %}
 
-  <a href="{% url "home" %}">На головну</a>
-</body>
-</html>
+{% block content %}
+
+<section class="simple-page">
+    <div class="container">
+        <h1>About F1 Portal</h1>
+        <p>
+            F1 Portal — це навчальний Django-сайт про Formula 1.
+            Тут є категорії, команди, пілоти, новини та події сезону,
+            які додаються через базу даних.
+        </p>
+
+        <a href="{% url 'home' %}" class="back-link">На головну</a>
+    </div>
+</section>
+
+{% endblock %}

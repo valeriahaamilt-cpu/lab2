@@ -1,0 +1,81 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ page_title }}</title>
+    <link rel="stylesheet" href="{% static 'pages/css/style.css' %}">
+</head>
+<body>
+
+<header class="site-header">
+    <div class="top-bar">
+        <div class="container top-bar-inner">
+            <span>Race Series</span>
+            <span>F1 Portal — навчальний сайт</span>
+        </div>
+    </div>
+
+    <div class="container nav-inner">
+        <a href="{% url 'home' %}" class="logo">
+            <span>F1</span> Portal
+        </a>
+
+        <nav class="main-nav">
+            <a href="{% url 'home' %}">Головна</a>
+
+            {% for category in categories %}
+                <a href="{% url 'category_page' category.slug %}">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'contact' %}">Contact</a>
+        </nav>
+
+        <div class="auth-buttons">
+            <button class="sign-btn">Sign in</button>
+            <button class="subscribe-btn">Subscribe</button>
+        </div>
+    </div>
+</header>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container footer-grid">
+        <div>
+            <h3>F1 Portal</h3>
+            <p>Навчальний сайт про Formula 1, команди, пілотів, новини та події сезону.</p>
+        </div>
+
+        <div>
+            <h3>Навігація</h3>
+            <a href="{% url 'home' %}">Головна</a>
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'contact' %}">Contact</a>
+        </div>
+
+        <div>
+            <h3>Категорії</h3>
+            {% for category in categories %}
+                <a href="{% url 'category_page' category.slug %}">
+                    {{ category.name }}
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="footer-bottom">
+        © 2026 F1 Portal. Django Lab 5.
+    </div>
+</footer>
+
+<script src="{% static 'pages/js/main.js' %}"></script>
+</body>
+</html>

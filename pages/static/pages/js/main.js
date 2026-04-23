@@ -1,0 +1,1 @@
+console.log("F1 Portal Lab 5 loaded");

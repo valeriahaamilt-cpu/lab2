@@ -1,13 +1,168 @@
-﻿<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>{{ title }}</title></head>
-<body>
-  <h1>{{ title }}</h1>
-  <p>Це головна сторінка. Нижче посилання на інші.</p>
+﻿{% extends "pages/base.html" %}
 
-  <ul>
-    <li><a href="{% url "about" %}">About</a></li>
-    <li><a href="{% url "contact" %}">Contact</a></li>
-  </ul>
-</body>
-</html>
+{% block content %}
+
+<section class="hero-section">
+    <div class="container hero-grid">
+
+        <div class="featured-card">
+            {% if featured_article %}
+                {% if featured_article.image_url %}
+                    <img src="{{ featured_article.image_url }}" alt="{{ featured_article.title }}">
+                {% endif %}
+
+                <div class="featured-content">
+                    {% if featured_article.is_locked %}
+                        <span class="tag">UNLOCKED</span>
+                    {% endif %}
+
+                    <h1>{{ featured_article.title }}</h1>
+                    <p>{{ featured_article.excerpt }}</p>
+                </div>
+            {% else %}
+                <div class="featured-content">
+                    <span class="tag">F1 PORTAL</span>
+                    <h1>Новини Formula 1, команди та події сезону</h1>
+                    <p>Додай новини через Django admin, щоб вони зʼявилися на головній.</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="side-news">
+            {% for article in side_articles %}
+                <article class="side-news-card">
+                    {% if article.image_url %}
+                        <img src="{{ article.image_url }}" alt="{{ article.title }}">
+                    {% endif %}
+
+                    <div>
+                        {% if article.is_locked %}
+                            <span class="small-tag">UNLOCKED</span>
+                        {% endif %}
+                        <h3>{{ article.title }}</h3>
+                    </div>
+                </article>
+            {% empty %}
+                <p>Поки що немає новин.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+<section class="quick-links-section">
+    <div class="container quick-links">
+        <a href="{% url 'category_page' 'schedule' %}" class="quick-card">2026 Schedule</a>
+        <a href="#" class="quick-card">2026 Standings</a>
+        <a href="#" class="quick-card">Regulations</a>
+        <a href="{% url 'category_page' 'news' %}" class="quick-card">Latest News</a>
+    </div>
+</section>
+
+<section class="standings-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>2026 Season</h2>
+            <p>Drivers standings</p>
+        </div>
+
+        <div class="driver-top-grid">
+            {% for driver in drivers|slice:":3" %}
+                <article class="driver-card">
+                    <div class="driver-info">
+                        <span class="position">{{ driver.position }}</span>
+                        <h3>{{ driver.name }}</h3>
+                        <p>{{ driver.team.name }}</p>
+                        <strong>{{ driver.points }} PTS</strong>
+                    </div>
+
+                    {% if driver.portrait_url %}
+                        <img src="{{ driver.portrait_url }}" alt="{{ driver.name }}">
+                    {% endif %}
+                </article>
+            {% empty %}
+                <p>Пілотів ще не додано.</p>
+            {% endfor %}
+        </div>
+
+        <div class="standings-table">
+            <div class="table-row table-head">
+                <span>POS.</span>
+                <span>DRIVER</span>
+                <span>NATIONALITY</span>
+                <span>TEAM</span>
+                <span>PTS.</span>
+            </div>
+
+            {% for driver in drivers %}
+                <div class="table-row">
+                    <span>{{ driver.position }}</span>
+                    <span>{{ driver.name }}</span>
+                    <span>{{ driver.country }}</span>
+                    <span>{{ driver.team.name }}</span>
+                    <span>{{ driver.points }}</span>
+                </div>
+            {% empty %}
+                <p>Пілотів ще не додано.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="events-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Upcoming Grand Prix</h2>
+            <p>Події, додані через базу даних</p>
+        </div>
+
+        <div class="event-grid">
+            {% for event in grand_prix_events %}
+                <article class="event-card">
+                    {% if event.image_url %}
+                        <img src="{{ event.image_url }}" alt="{{ event.name }}">
+                    {% endif %}
+
+                    <div class="event-content">
+                        <span>{{ event.start_date }} — {{ event.end_date }}</span>
+                        <h3>{{ event.name }}</h3>
+                        <p>{{ event.city }}, {{ event.country }}</p>
+                        <strong>${{ event.ticket_price }}</strong>
+                    </div>
+                </article>
+            {% empty %}
+                <p>Події ще не додані.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="teams-section">
+    <div class="container">
+        <div class="section-title">
+            <h2>Teams</h2>
+            <p>Команди з бази даних</p>
+        </div>
+
+        <div class="team-grid">
+            {% for team in teams %}
+                <article class="team-card">
+                    {% if team.logo_url %}
+                        <img src="{{ team.logo_url }}" alt="{{ team.name }}">
+                    {% endif %}
+
+                    <h3>{{ team.name }}</h3>
+                    <p>{{ team.base }}</p>
+
+                    {% if team.car_image_url %}
+                        <img class="car-img" src="{{ team.car_image_url }}" alt="{{ team.name }}">
+                    {% endif %}
+                </article>
+            {% empty %}
+                <p>Команди ще не додані.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

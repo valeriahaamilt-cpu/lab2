@@ -1,10 +1,15 @@
-﻿<!doctype html>
-<html>
-<head><meta charset="utf-8"><title>{{ title }}</title></head>
-<body>
-  <h1>{{ title }}</h1>
-  <p>{{ text }}</p>
+﻿{% extends "pages/base.html" %}
 
-  <a href="{% url "home" %}">На головну</a>
-</body>
-</html>
+{% block content %}
+
+<section class="simple-page">
+    <div class="container">
+        <h1>Contact</h1>
+        <p>Email: f1portal@example.com</p>
+        <p>Тема сайту: Formula 1 news portal.</p>
+
+        <a href="{% url 'home' %}" class="back-link">На головну</a>
+    </div>
+</section>
+
+{% endblock %}
