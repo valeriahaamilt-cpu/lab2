@@ -8,6 +8,8 @@ from .models import (
     GrandPrixComment,
     NewsletterSubscriber,
     GrandPrixRating,
+    TicketOrder,
+    PasswordResetCode,
 )
 
 
@@ -67,3 +69,17 @@ class GrandPrixRatingAdmin(admin.ModelAdmin):
     list_display = ("grand_prix", "name", "score", "created_at", "updated_at")
     list_filter = ("grand_prix", "score")
     search_fields = ("name",)
+
+
+@admin.register(TicketOrder)
+class TicketOrderAdmin(admin.ModelAdmin):
+    list_display = ("user", "grand_prix", "full_name", "email", "quantity", "created_at", "updated_at")
+    list_filter = ("grand_prix", "created_at")
+    search_fields = ("full_name", "email", "user__username")
+
+
+@admin.register(PasswordResetCode)
+class PasswordResetCodeAdmin(admin.ModelAdmin):
+    list_display = ("user", "code", "expires_at", "is_used", "created_at")
+    list_filter = ("is_used", "created_at")
+    search_fields = ("user__username", "code")

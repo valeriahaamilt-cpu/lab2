@@ -43,6 +43,24 @@
 
             <button class="buy-ticket-btn" disabled>Купити квиток</button>
             <p class="buy-note">Кнопка неактивна, бо це лабораторна робота.</p>
+
+            <div class="form-card order-card">
+                <h3>Оформити замовлення</h3>
+
+                {% if order_success %}
+                    <p class="success-message">Замовлення успішно створено.</p>
+                {% endif %}
+
+                {% if user.is_authenticated %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ order_form.as_p }}
+                        <button type="submit" name="submit_order" class="form-btn">Оформити замовлення</button>
+                    </form>
+                {% else %}
+                    <p>Щоб оформити замовлення, потрібно <a href="{% url 'login' %}">увійти</a>.</p>
+                {% endif %}
+            </div>
         </div>
 
     </div>

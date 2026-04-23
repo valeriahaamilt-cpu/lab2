@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.conf import settings
+from django.utils import timezone
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -115,3 +116,29 @@ class GrandPrixRating(models.Model):
 
     def __str__(self):
         return f"{self.grand_prix.name} - {self.score}"
+
+class TicketOrder(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ticket_orders")
+    grand_prix = models.ForeignKey(GrandPrix, on_delete=models.CASCADE, related_name="orders")
+    full_name = models.CharField(max_length=150)
+    email = models.EmailField()
+    quantity = models.PositiveIntegerField(default=1)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.full_name} - {self.grand_prix.name}"
+
+
+class PasswordResetCode(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="password_reset_codes")
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"{self.user.username} - {self.code}"

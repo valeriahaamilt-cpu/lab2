@@ -1,0 +1,28 @@
+{% extends "pages/base.html" %}
+
+{% block content %}
+
+<section class="simple-page">
+    <div class="container auth-page">
+        <div class="form-card auth-card">
+            <h1>Вхід</h1>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="form-btn">Увійти</button>
+            </form>
+
+            <p class="auth-link-text">
+                Немає акаунта?
+                <a href="{% url 'register' %}">Зареєструватись</a>
+            </p>
+
+            <p class="auth-link-text">
+                <a href="{% url 'forgot_password' %}">Забули пароль?</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

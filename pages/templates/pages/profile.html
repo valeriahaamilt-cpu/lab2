@@ -1,0 +1,36 @@
+{% extends "pages/base.html" %}
+
+{% block content %}
+
+<section class="simple-page">
+    <div class="container">
+        <h1>Особистий кабінет</h1>
+
+        {% if user.is_staff or user.is_superuser %}
+            <p>Ви увійшли як адміністратор. Нижче відображаються всі замовлення.</p>
+        {% else %}
+            <p>Тут відображаються ваші попередні замовлення квитків.</p>
+        {% endif %}
+
+        <div class="comments-list">
+            {% for order in orders %}
+                <article class="comment-card">
+                    <h3>{{ order.grand_prix.name }}</h3>
+                    <p><strong>Ім’я:</strong> {{ order.full_name }}</p>
+                    <p><strong>Email:</strong> {{ order.email }}</p>
+                    <p><strong>Кількість:</strong> {{ order.quantity }}</p>
+
+                    {% if user.is_staff or user.is_superuser %}
+                        <p><strong>Користувач:</strong> {{ order.user.username }}</p>
+                    {% endif %}
+
+                    <span>{{ order.created_at }}</span>
+                </article>
+            {% empty %}
+                <p>Замовлень поки немає.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
