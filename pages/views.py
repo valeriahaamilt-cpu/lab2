@@ -186,6 +186,8 @@ def register_view(request):
             user = form.save()
             login(request, user)
             return redirect("profile")
+        else:
+            print(form.errors)
 
     context = get_common_context()
     context.update({

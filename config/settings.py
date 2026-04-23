@@ -120,4 +120,14 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+EMAIL_BACKEND = "pages.email_backend.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "formula1.portall@gmail.com"
+EMAIL_HOST_PASSWORD = "oncghtnotnlctncg"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/profile/"
+LOGOUT_REDIRECT_URL = "/"

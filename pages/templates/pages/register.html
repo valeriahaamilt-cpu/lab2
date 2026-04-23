@@ -7,6 +7,12 @@
         <div class="form-card auth-card">
             <h1>Реєстрація</h1>
 
+            {% if form.errors %}
+                <div class="error-message">
+                    {{ form.errors }}
+                </div>
+            {% endif %}
+
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
