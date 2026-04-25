@@ -74,8 +74,8 @@ class GrandPrixRatingAdmin(admin.ModelAdmin):
 @admin.register(TicketOrder)
 class TicketOrderAdmin(admin.ModelAdmin):
     list_display = ("user", "grand_prix", "full_name", "email", "quantity", "created_at", "updated_at")
-    list_filter = ("grand_prix", "created_at")
-    search_fields = ("full_name", "email", "user__username")
+    list_filter = ("grand_prix", "created_at", "user")
+    search_fields = ("full_name", "email", "user__username", "grand_prix__name")
 
 
 @admin.register(PasswordResetCode)

@@ -23,8 +23,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-^&x38du#!4-=^_ga7dkb)62sy9n+=*n0!a-217tk*ro+ov16cf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-ALLOWED_HOSTS = ["13.63.96.49", "f1portal.pp.ua", "www.f1portal.pp.ua", "127.0.0.1", "localhost"]
+DEBUG = True
+ALLOWED_HOSTS = [
+    "f1portal.pp.ua",
+    "www.f1portal.pp.ua",
+    "13.63.96.49",
+    "127.0.0.1",
+    "localhost",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://f1portal.pp.ua",
+    "https://www.f1portal.pp.ua",
+    "http://f1portal.pp.ua",
+    "http://www.f1portal.pp.ua",
+]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Application definition

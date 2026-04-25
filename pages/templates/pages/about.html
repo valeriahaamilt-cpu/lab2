@@ -1,17 +1,25 @@
 ﻿{% extends "pages/base.html" %}
 
+{% block title %}About F1 Portal{% endblock %}
+
 {% block content %}
 
 <section class="simple-page">
     <div class="container">
         <h1>About F1 Portal</h1>
         <p>
-            F1 Portal — це навчальний Django-сайт про Formula 1.
-            Тут є категорії, команди, пілоти, новини та події сезону,
-            які додаються через базу даних.
+            F1 Portal is an educational Django website about Formula 1.
+            The website includes categories, teams, drivers, news and season events
+            that are managed through the database.
         </p>
 
-        <a href="{% url 'home' %}" class="back-link">На головну</a>
+        <p>
+            The project was created as a college laboratory work to demonstrate
+            Django templates, database models, user authentication, ticket orders
+            and password recovery functionality.
+        </p>
+
+        <a href="{% url 'home' %}" class="back-link">Back to home</a>
     </div>
 </section>
 

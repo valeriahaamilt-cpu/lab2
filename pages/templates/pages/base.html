@@ -1,10 +1,10 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ page_title }}</title>
+    <title>{% block title %}{{ page_title|default:"F1 Portal" }}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'pages/css/style.css' %}">
 </head>
 <body>
@@ -13,7 +13,7 @@
     <div class="top-bar">
         <div class="container top-bar-inner">
             <span>Race Series</span>
-            <span>F1 Portal — навчальний сайт</span>
+            <span>F1 Portal — educational website</span>
         </div>
     </div>
 
@@ -23,7 +23,7 @@
         </a>
 
         <nav class="main-nav">
-            <a href="{% url 'home' %}">Головна</a>
+            <a href="{% url 'home' %}">Home</a>
 
             {% for category in categories %}
                 <a href="{% url 'category_page' category.slug %}">
@@ -37,15 +37,23 @@
 
         <div class="auth-buttons">
             {% if user.is_authenticated %}
-                <a href="{% url 'profile' %}" class="sign-btn">Кабінет</a>
-                <a href="{% url 'logout' %}" class="subscribe-btn">Вийти</a>
+                <a href="{% url 'profile' %}" class="sign-btn">My Account</a>
+                <a href="{% url 'logout' %}" class="subscribe-btn">Log out</a>
             {% else %}
-                <a href="{% url 'login' %}" class="sign-btn">Увійти</a>
-                <a href="{% url 'register' %}" class="subscribe-btn">Зареєструватись</a>
+                <a href="{% url 'login' %}" class="sign-btn">Log in</a>
+                <a href="{% url 'register' %}" class="subscribe-btn">Sign up</a>
             {% endif %}
         </div>
     </div>
 </header>
+
+{% if messages %}
+    <div class="container messages">
+        {% for message in messages %}
+            <p class="message {{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
 
 <main>
     {% block content %}
@@ -56,18 +64,24 @@
     <div class="container footer-grid">
         <div>
             <h3>F1 Portal</h3>
-            <p>Навчальний сайт про Formula 1, команди, пілотів, новини та події сезону.</p>
+            <p>
+                Educational website about Formula 1, teams, drivers, news and season events.
+            </p>
+            <p class="footer-note">
+                This website is an educational project and is not affiliated with Formula 1,
+                FIA, Ferrari, Mercedes, Red Bull Racing or any official racing organization.
+            </p>
         </div>
 
         <div>
-            <h3>Навігація</h3>
-            <a href="{% url 'home' %}">Головна</a>
+            <h3>Navigation</h3>
+            <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'about' %}">About</a>
             <a href="{% url 'contact' %}">Contact</a>
         </div>
 
         <div>
-            <h3>Категорії</h3>
+            <h3>Categories</h3>
             {% for category in categories %}
                 <a href="{% url 'category_page' category.slug %}">
                     {{ category.name }}

@@ -20,7 +20,7 @@ class Team(models.Model):
     base = models.CharField(max_length=150, blank=True)
     logo_url = models.URLField(blank=True)
     car_image_url = models.URLField(blank=True)
-    team_color = models.CharField(max_length=20, blank=True, help_text="Наприклад: #e10600")
+    team_color = models.CharField(max_length=20, blank=True, help_text="Example: #e10600")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -1,11 +1,13 @@
 {% extends "pages/base.html" %}
 
+{% block title %}Sign Up — F1 Portal{% endblock %}
+
 {% block content %}
 
 <section class="simple-page">
     <div class="container auth-page">
         <div class="form-card auth-card">
-            <h1>Реєстрація</h1>
+            <h1>Sign Up</h1>
 
             {% if form.errors %}
                 <div class="error-message">
@@ -16,12 +18,12 @@
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="form-btn">Зареєструватись</button>
+                <button type="submit" class="form-btn">Sign Up</button>
             </form>
 
             <p class="auth-link-text">
-                Уже є акаунт?
-                <a href="{% url 'login' %}">Увійти</a>
+                Already have an account?
+                <a href="{% url 'login' %}">Log in</a>
             </p>
         </div>
     </div>

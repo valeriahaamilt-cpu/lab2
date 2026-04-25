@@ -1,5 +1,7 @@
 {% extends "pages/base.html" %}
 
+{% block title %}{{ category.name }} — F1 Portal{% endblock %}
+
 {% block content %}
 
 <section class="category-hero">
@@ -7,7 +9,7 @@
         <span class="tag">CATEGORY</span>
         <h1>{{ category.name }}</h1>
         <p>{{ category.description }}</p>
-        <a href="{% url 'home' %}" class="back-link">Повернутись на головну</a>
+        <a href="{% url 'home' %}" class="back-link">Back to home</a>
     </div>
 </section>
 
@@ -15,7 +17,7 @@
     <div class="container">
 
         {% if articles %}
-            <h2>Матеріали категорії</h2>
+            <h2>Category articles</h2>
 
             <div class="article-grid">
                 {% for article in articles %}
@@ -35,7 +37,7 @@
         {% endif %}
 
         {% if grand_prix_events %}
-            <h2>Grand Prix</h2>
+            <h2>Grand Prix Events</h2>
 
             <div class="event-grid">
                 {% for event in grand_prix_events %}
@@ -58,7 +60,7 @@
         {% endif %}
 
         {% if not articles and not grand_prix_events %}
-            <p>У цій категорії поки немає елементів.</p>
+            <p>There are no items in this category yet.</p>
         {% endif %}
 
     </div>

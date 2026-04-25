@@ -1,6 +1,7 @@
 ﻿import random
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
@@ -56,8 +57,8 @@ def home(request):
     else:
         side_articles = latest_articles[:4]
 
-    drivers = Driver.objects.select_related("team").order_by("position")[:6]
-    teams = Team.objects.all()[:4]
+    drivers = Driver.objects.select_related("team").order_by("position")
+    teams = Team.objects.all().order_by("name")
     grand_prix_events = GrandPrix.objects.filter(is_upcoming=True).order_by("start_date")[:3]
 
     context = get_common_context()
@@ -76,21 +77,60 @@ def home(request):
 def category_page(request, slug):
     category = get_object_or_404(Category, slug=slug)
 
+    context = get_common_context()
+    context.update({
+        "page_title": f"{category.name} - F1 Portal",
+        "category": category,
+    })
+
+    if slug == "drivers":
+        drivers = Driver.objects.select_related("team").order_by("position")
+        context.update({
+            "drivers": drivers,
+        })
+        return render(request, "pages/drivers.html", context)
+
+    if slug == "teams":
+        teams = Team.objects.all().order_by("name")
+        context.update({
+            "teams": teams,
+        })
+        return render(request, "pages/teams.html", context)
+
     articles = Article.objects.filter(category=category).select_related(
         "category", "team", "driver"
     ).order_by("-created_at")
 
     grand_prix_events = GrandPrix.objects.filter(category=category).order_by("start_date")
 
-    context = get_common_context()
     context.update({
-        "page_title": f"{category.name} - F1 Portal",
-        "category": category,
         "articles": articles,
         "grand_prix_events": grand_prix_events,
     })
 
     return render(request, "pages/category.html", context)
+
+
+def article_detail(request, slug):
+    article = get_object_or_404(
+        Article.objects.select_related("category", "team", "driver"),
+        slug=slug
+    )
+
+    related_articles = Article.objects.filter(
+        category=article.category
+    ).exclude(id=article.id).select_related(
+        "category", "team", "driver"
+    ).order_by("-created_at")[:4]
+
+    context = get_common_context()
+    context.update({
+        "page_title": f"{article.title} - F1 Portal",
+        "article": article,
+        "related_articles": related_articles,
+    })
+
+    return render(request, "pages/article_detail.html", context)
 
 
 def grand_prix_detail(request, slug):
@@ -186,12 +226,10 @@ def register_view(request):
             user = form.save()
             login(request, user)
             return redirect("profile")
-        else:
-            print(form.errors)
 
     context = get_common_context()
     context.update({
-        "page_title": "Реєстрація - F1 Portal",
+        "page_title": "Sign Up - F1 Portal",
         "form": form,
     })
 
@@ -212,7 +250,7 @@ def login_view(request):
 
     context = get_common_context()
     context.update({
-        "page_title": "Вхід - F1 Portal",
+        "page_title": "Log In - F1 Portal",
         "form": form,
     })
 
@@ -233,7 +271,7 @@ def profile_view(request):
 
     context = get_common_context()
     context.update({
-        "page_title": "Особистий кабінет - F1 Portal",
+        "page_title": "My Account - F1 Portal",
         "orders": orders,
     })
 
@@ -260,8 +298,8 @@ def forgot_password_view(request):
 
                 send_mail(
                     subject="F1 Portal password reset code",
-                    message=f"Ваш код для відновлення пароля: {code}",
-                    from_email=None,
+                    message=f"Your password reset code is: {code}. The code is valid for 15 minutes.",
+                    from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[email],
                     fail_silently=False,
                 )
@@ -270,11 +308,11 @@ def forgot_password_view(request):
                 request.session["reset_code_id"] = reset_code.id
                 return redirect("verify_reset_code")
             else:
-                message = "Користувача з таким email не знайдено."
+                message = "User with this email was not found."
 
     context = get_common_context()
     context.update({
-        "page_title": "Відновлення пароля - F1 Portal",
+        "page_title": "Reset Password - F1 Portal",
         "form": form,
         "message": message,
     })
@@ -299,7 +337,7 @@ def verify_reset_code_view(request):
     ).first()
 
     if not code_object or code_object.is_expired():
-        message = "Код недійсний або вже прострочений."
+        message = "The code is invalid or has expired."
 
     if request.method == "POST":
         form = VerifyResetCodeForm(request.POST)
@@ -310,11 +348,11 @@ def verify_reset_code_view(request):
                 request.session["password_reset_verified"] = True
                 return redirect("set_new_password")
             else:
-                message = "Неправильний код."
+                message = "Incorrect code."
 
     context = get_common_context()
     context.update({
-        "page_title": "Перевірка коду - F1 Portal",
+        "page_title": "Verify Reset Code - F1 Portal",
         "form": form,
         "message": message,
     })
@@ -340,7 +378,7 @@ def set_new_password_view(request):
             password2 = form.cleaned_data["new_password2"]
 
             if password1 != password2:
-                message = "Паролі не співпадають."
+                message = "Passwords do not match."
             else:
                 user = get_object_or_404(User, id=reset_user_id)
                 user.set_password(password1)
@@ -356,7 +394,7 @@ def set_new_password_view(request):
 
     context = get_common_context()
     context.update({
-        "page_title": "Новий пароль - F1 Portal",
+        "page_title": "Set New Password - F1 Portal",
         "form": form,
         "message": message,
     })

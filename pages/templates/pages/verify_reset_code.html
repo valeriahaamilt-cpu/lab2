@@ -1,11 +1,17 @@
 {% extends "pages/base.html" %}
 
+{% block title %}Verify Reset Code — F1 Portal{% endblock %}
+
 {% block content %}
 
 <section class="simple-page">
     <div class="container auth-page">
         <div class="form-card auth-card">
-            <h1>Перевірка коду</h1>
+            <h1>Verify Reset Code</h1>
+
+            <p>
+                Enter the temporary code that was sent to your email address.
+            </p>
 
             {% if message %}
                 <p class="error-message">{{ message }}</p>
@@ -14,7 +20,7 @@
             <form method="post">
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit" class="form-btn">Підтвердити код</button>
+                <button type="submit" class="form-btn">Verify Code</button>
             </form>
         </div>
     </div>
