@@ -1,0 +1,129 @@
+{% extends "pages/base.html" %}
+
+{% block title %}{{ driver.name }} — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="driver-detail-hero team-{{ driver.team.slug }}">
+    <div class="container driver-hero-layout">
+        <div class="driver-hero-info">
+            <a href="{% url 'category_page' 'drivers' %}" class="driver-back-link">← All drivers</a>
+
+            <span class="driver-number">#{{ driver.number }}</span>
+
+            <h1>{{ driver.name }}</h1>
+
+            <div class="driver-meta">
+                <span>{{ driver.country }}</span>
+                <span>{{ driver.team.name }}</span>
+                <span>{{ driver.points }} pts</span>
+            </div>
+        </div>
+
+        <div class="driver-hero-image">
+            {% if driver.portrait_url %}
+                <img src="{{ driver.portrait_url }}" alt="{{ driver.name }}">
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="driver-detail-section">
+    <div class="container driver-detail-grid">
+
+        <div class="driver-statistics">
+            <h2>Statistics</h2>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span>Season position</span>
+                    <strong>{{ driver.position }}</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>Season points</span>
+                    <strong>{{ driver.points }}</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>Driver number</span>
+                    <strong>{{ driver.number }}</strong>
+                </div>
+
+                <div class="stat-card">
+                    <span>Team</span>
+                    <strong>{{ driver.team.name }}</strong>
+                </div>
+            </div>
+
+            <h2>Career Stats</h2>
+
+            <div class="career-stats-card">
+                <div class="career-row">
+                    <span>Grand Prix entered</span>
+                    <strong>{{ driver.grand_prix_entered }}</strong>
+                </div>
+
+                <div class="career-row">
+                    <span>Career points</span>
+                    <strong>{{ driver.career_points }}</strong>
+                </div>
+
+                <div class="career-row">
+                    <span>Highest race finish</span>
+                    <strong>{{ driver.highest_race_finish|default:"—" }}</strong>
+                </div>
+
+                <div class="career-row">
+                    <span>Podiums</span>
+                    <strong>{{ driver.podiums }}</strong>
+                </div>
+
+                <div class="career-row">
+                    <span>Highest grid position</span>
+                    <strong>{{ driver.highest_grid_position|default:"—" }}</strong>
+                </div>
+
+                <div class="career-row">
+                    <span>Pole positions</span>
+                    <strong>{{ driver.pole_positions }}</strong>
+                </div>
+
+                <div class="career-row">
+                    <span>World championships</span>
+                    <strong>{{ driver.world_championships }}</strong>
+                </div>
+
+                <div class="career-row">
+                    <span>DNFs</span>
+                    <strong>{{ driver.dnfs }}</strong>
+                </div>
+            </div>
+        </div>
+
+        <aside class="driver-biography">
+            <h2>Biography</h2>
+
+            <div class="bio-card">
+                {% if driver.date_of_birth %}
+                    <p><strong>Date of birth:</strong> {{ driver.date_of_birth }}</p>
+                {% endif %}
+
+                {% if driver.birthplace %}
+                    <p><strong>Birthplace:</strong> {{ driver.birthplace }}</p>
+                {% endif %}
+
+                {% if driver.bio %}
+                    <div class="bio-text">
+                        {{ driver.bio|linebreaks }}
+                    </div>
+                {% else %}
+                    <p>No biography has been added yet.</p>
+                {% endif %}
+            </div>
+        </aside>
+
+    </div>
+</section>
+
+{% endblock %}

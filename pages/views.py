@@ -31,15 +31,51 @@ from .models import (
     PasswordResetCode,
     Team,
     TicketOrder,
+    HomeQuickLink,
 )
 
 User = get_user_model()
 
 
 def get_common_context():
-    categories = Category.objects.all()
+    today = timezone.localdate()
+
+    categories = Category.objects.all().order_by("created_at")
+
+    schedule_previous = GrandPrix.objects.filter(
+        end_date__lt=today
+    ).order_by("-end_date").first()
+
+    schedule_next = GrandPrix.objects.filter(
+        start_date__gte=today
+    ).order_by("start_date").first()
+
+    schedule_upcoming = GrandPrix.objects.filter(
+        start_date__gt=today
+    ).order_by("start_date")
+
+    news_menu_articles = Article.objects.select_related(
+    "category", "team", "driver"
+    ).order_by("-created_at")[:4]
+
+    news_menu_featured = Article.objects.filter(
+        is_featured=True
+    ).select_related(
+    "category", "team", "driver"
+    ).first()
+
+    if schedule_next:
+        schedule_upcoming = schedule_upcoming.exclude(id=schedule_next.id)
+
+    schedule_upcoming = schedule_upcoming[:2]
+
     return {
         "categories": categories,
+        "schedule_previous": schedule_previous,
+        "schedule_next": schedule_next,
+        "schedule_upcoming": schedule_upcoming,
+        "news_menu_articles": news_menu_articles,
+        "news_menu_featured": news_menu_featured,
     }
 
 
@@ -60,7 +96,7 @@ def home(request):
     drivers = Driver.objects.select_related("team").order_by("position")
     teams = Team.objects.all().order_by("name")
     grand_prix_events = GrandPrix.objects.filter(is_upcoming=True).order_by("start_date")[:3]
-
+    quick_links = HomeQuickLink.objects.filter(is_active=True).order_by("order")
     context = get_common_context()
     context.update({
         "page_title": "F1 Portal",
@@ -69,8 +105,9 @@ def home(request):
         "drivers": drivers,
         "teams": teams,
         "grand_prix_events": grand_prix_events,
+        "quick_links": quick_links,
     })
-
+    
     return render(request, "pages/home.html", context)
 
 
@@ -416,3 +453,37 @@ def contact(request):
         "page_title": "Contact - F1 Portal",
     })
     return render(request, "pages/contact.html", context)
+
+def driver_detail(request, slug):
+    driver = get_object_or_404(
+        Driver.objects.select_related("team"),
+        slug=slug
+    )
+
+    context = get_common_context()
+    context.update({
+        "page_title": f"{driver.name} - F1 Portal",
+        "driver": driver,
+    })
+
+    return render(request, "pages/driver_detail.html", context)
+
+
+def team_detail(request, slug):
+    team = get_object_or_404(Team, slug=slug)
+
+    team_drivers = Driver.objects.filter(team=team).order_by("position")
+
+    team_articles = Article.objects.filter(team=team).select_related(
+        "category", "team", "driver"
+    ).order_by("-created_at")[:4]
+
+    context = get_common_context()
+    context.update({
+        "page_title": f"{team.name} - F1 Portal",
+        "team": team,
+        "team_drivers": team_drivers,
+        "team_articles": team_articles,
+    })
+
+    return render(request, "pages/team_detail.html", context)

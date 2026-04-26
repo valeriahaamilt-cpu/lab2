@@ -10,6 +10,7 @@ from .models import (
     GrandPrixRating,
     TicketOrder,
     PasswordResetCode,
+    HomeQuickLink,
 )
 
 
@@ -32,7 +33,49 @@ class DriverAdmin(admin.ModelAdmin):
     list_display = ("name", "number", "team", "country", "position", "points", "created_at", "updated_at")
     prepopulated_fields = {"slug": ("name",)}
     list_filter = ("team", "country")
-    search_fields = ("name", "country")
+    search_fields = ("name", "country", "team__name")
+
+    fieldsets = (
+        ("Main information", {
+            "fields": (
+                "name",
+                "slug",
+                "number",
+                "team",
+                "country",
+                "portrait_url",
+                "position",
+                "points",
+            )
+        }),
+        ("Biography", {
+            "fields": (
+                "bio",
+                "date_of_birth",
+                "birthplace",
+            )
+        }),
+        ("Career statistics", {
+            "fields": (
+                "grand_prix_entered",
+                "career_points",
+                "highest_race_finish",
+                "podiums",
+                "highest_grid_position",
+                "pole_positions",
+                "world_championships",
+                "dnfs",
+            )
+        }),
+        ("Dates", {
+            "fields": (
+                "created_at",
+                "updated_at",
+            )
+        }),
+    )
+
+    readonly_fields = ("created_at", "updated_at")
 
 
 @admin.register(Article)
@@ -83,3 +126,10 @@ class PasswordResetCodeAdmin(admin.ModelAdmin):
     list_display = ("user", "code", "expires_at", "is_used", "created_at")
     list_filter = ("is_used", "created_at")
     search_fields = ("user__username", "code")
+
+
+@admin.register(HomeQuickLink)
+class HomeQuickLinkAdmin(admin.ModelAdmin):
+    list_display = ("title", "url", "order", "is_active", "created_at", "updated_at")
+    list_filter = ("is_active",)
+    search_fields = ("title", "url")

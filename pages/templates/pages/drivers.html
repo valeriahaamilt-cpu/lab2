@@ -19,35 +19,37 @@
         </div>
 
         <div class="standings-table">
-    <div class="table-row table-head">
-        <span>POS.</span>
-        <span>DRIVER</span>
-        <span>NATIONALITY</span>
-        <span>TEAM</span>
-        <span>PTS.</span>
-    </div>
+            <div class="table-row table-head">
+                <span>POS.</span>
+                <span>DRIVER</span>
+                <span>NATIONALITY</span>
+                <span>TEAM</span>
+                <span>PTS.</span>
+            </div>
 
-    {% for driver in drivers %}
-        <div class="table-row">
-            <span>{{ driver.position }}</span>
+            {% for driver in drivers %}
+                <a href="{% url 'driver_detail' driver.slug %}" class="table-row driver-row-link">
+                    <span>{{ driver.position }}</span>
 
-            <span class="driver-name-cell">
-                <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
-                {{ driver.name }}
-            </span>
+                    <span class="driver-name-cell">
+                        <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
+                        {{ driver.name }}
+                    </span>
 
-            <span>{{ driver.country }}</span>
+                    <span>{{ driver.country }}</span>
 
-            <span class="driver-team-cell">
-                <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
-                {{ driver.team.name }}
-            </span>
+                    <span class="driver-team-cell">
+                        <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
+                        {{ driver.team.name }}
+                    </span>
 
-            <span>{{ driver.points }}</span>
+                    <span>{{ driver.points }}</span>
+                </a>
+            {% empty %}
+                <p>No drivers have been added yet.</p>
+            {% endfor %}
         </div>
-    {% empty %}
-        <p>No drivers have been added yet.</p>
-    {% endfor %}
-</div>
+    </div>
+</section>
 
 {% endblock %}

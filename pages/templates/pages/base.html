@@ -10,25 +10,195 @@
 <body>
 
 <header class="site-header">
-    <div class="top-bar">
-        <div class="container top-bar-inner">
-            <span>Race Series</span>
-            <span>F1 Portal — educational website</span>
-        </div>
-    </div>
-
     <div class="container nav-inner">
         <a href="{% url 'home' %}" class="logo">
             <span>F1</span> Portal
         </a>
 
         <nav class="main-nav">
-            <a href="{% url 'home' %}">Home</a>
-
             {% for category in categories %}
-                <a href="{% url 'category_page' category.slug %}">
-                    {{ category.name }}
-                </a>
+
+                {% if category.slug == "news" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu news-mega-menu">
+                            <div class="container news-menu-inner">
+
+                                <div class="news-menu-left">
+                                    <div class="news-menu-tags">
+                                        <a href="{% url 'category_page' 'news' %}">All</a>
+                                        <a href="{% url 'category_page' 'news' %}">Analysis</a>
+                                        <a href="{% url 'category_page' 'news' %}">Technical</a>
+                                        <a href="{% url 'category_page' 'news' %}">F1 Unlocked</a>
+                                    </div>
+
+                                    <h3>News</h3>
+
+                                    <div class="news-menu-grid">
+                                        {% for article in news_menu_articles %}
+                                            <a href="{% url 'article_detail' article.slug %}" class="news-menu-card">
+                                                {% if article.image_url %}
+                                                    <img src="{{ article.image_url }}" alt="{{ article.title }}">
+                                                {% endif %}
+
+                                                <div class="news-menu-card-content">
+                                                    {% if article.is_locked %}
+                                                        <span class="small-tag">UNLOCKED</span>
+                                                    {% else %}
+                                                        <span class="small-tag">{{ article.category.name }}</span>
+                                                    {% endif %}
+
+                                                    <h4>{{ article.title }}</h4>
+                                                    <p>{{ article.created_at|date:"F d, Y" }}</p>
+                                                </div>
+                                            </a>
+                                        {% empty %}
+                                            <p>No news has been added yet.</p>
+                                        {% endfor %}
+                                    </div>
+
+                                    <a href="{% url 'category_page' 'news' %}" class="mega-more-btn">
+                                        More news
+                                    </a>
+                                </div>
+
+                                <div class="news-menu-right">
+                                    <h3>Featured</h3>
+
+                                    {% if news_menu_featured %}
+                                        <a href="{% url 'article_detail' news_menu_featured.slug %}" class="news-featured-card">
+                                            {% if news_menu_featured.image_url %}
+                                                <img src="{{ news_menu_featured.image_url }}" alt="{{ news_menu_featured.title }}">
+                                            {% endif %}
+
+                                            <div>
+                                                {% if news_menu_featured.is_locked %}
+                                                    <span class="small-tag">UNLOCKED</span>
+                                                {% else %}
+                                                    <span class="small-tag">{{ news_menu_featured.category.name }}</span>
+                                                {% endif %}
+
+                                                <h4>{{ news_menu_featured.title }}</h4>
+                                                <p>{{ news_menu_featured.excerpt }}</p>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <p>No featured news yet.</p>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% elif category.slug == "schedule" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu schedule-mega-menu">
+                            <div class="container schedule-menu-inner">
+
+                                <div class="schedule-menu-column">
+                                    <h3>Previous</h3>
+
+                                    {% if schedule_previous %}
+                                        <a href="{% url 'grand_prix_detail' schedule_previous.slug %}" class="schedule-card small-card">
+                                            {% if schedule_previous.image_url %}
+                                                <img src="{{ schedule_previous.image_url }}" alt="{{ schedule_previous.name }}">
+                                            {% endif %}
+
+                                            <div class="schedule-card-content">
+                                                <span class="schedule-round">Previous race</span>
+                                                <h4>{{ schedule_previous.name }}</h4>
+                                                <p>
+                                                    {{ schedule_previous.start_date|date:"d M" }}
+                                                    —
+                                                    {{ schedule_previous.end_date|date:"d M" }}
+                                                </p>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <div class="schedule-empty">
+                                            <p>No previous race yet.</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="schedule-menu-column">
+                                    <h3>Next</h3>
+
+                                    {% if schedule_next %}
+                                        <a href="{% url 'grand_prix_detail' schedule_next.slug %}" class="schedule-card large-card">
+                                            {% if schedule_next.image_url %}
+                                                <img src="{{ schedule_next.image_url }}" alt="{{ schedule_next.name }}">
+                                            {% endif %}
+
+                                            <div class="schedule-card-content">
+                                                <span class="schedule-round">Next race</span>
+                                                <h4>{{ schedule_next.name }}</h4>
+                                                <p>
+                                                    {{ schedule_next.start_date|date:"d M" }}
+                                                    —
+                                                    {{ schedule_next.end_date|date:"d M" }}
+                                                </p>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <div class="schedule-empty">
+                                            <p>No next race yet.</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="schedule-menu-column">
+                                    <h3>Upcoming</h3>
+
+                                    <div class="upcoming-grid">
+                                        {% for race in schedule_upcoming %}
+                                            <a href="{% url 'grand_prix_detail' race.slug %}" class="schedule-card small-card">
+                                                {% if race.image_url %}
+                                                    <img src="{{ race.image_url }}" alt="{{ race.name }}">
+                                                {% endif %}
+
+                                                <div class="schedule-card-content">
+                                                    <span class="schedule-round">Upcoming</span>
+                                                    <h4>{{ race.name }}</h4>
+                                                    <p>
+                                                        {{ race.start_date|date:"d M" }}
+                                                        —
+                                                        {{ race.end_date|date:"d M" }}
+                                                    </p>
+                                                </div>
+                                            </a>
+                                        {% empty %}
+                                            <div class="schedule-empty">
+                                                <p>No upcoming races yet.</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="schedule-menu-footer">
+                                    <a href="{% url 'category_page' 'schedule' %}" class="full-schedule-btn">
+                                        Full Schedule
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% else %}
+                    <a href="{% url 'category_page' category.slug %}">
+                        {{ category.name }}
+                    </a>
+                {% endif %}
+
             {% endfor %}
 
             <a href="{% url 'about' %}">About</a>
@@ -75,7 +245,6 @@
 
         <div>
             <h3>Navigation</h3>
-            <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'about' %}">About</a>
             <a href="{% url 'contact' %}">Contact</a>
         </div>

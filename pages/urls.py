@@ -4,6 +4,8 @@ from . import views
 urlpatterns = [
     path("", views.home, name="home"),
     path("category/<slug:slug>/", views.category_page, name="category_page"),
+    path("driver/<slug:slug>/", views.driver_detail, name="driver_detail"),
+    path("team/<slug:slug>/", views.team_detail, name="team_detail"),
     path("article/<slug:slug>/", views.article_detail, name="article_detail"),
     path("grand-prix/<slug:slug>/", views.grand_prix_detail, name="grand_prix_detail"),
 

@@ -39,6 +39,17 @@ class Driver(models.Model):
     position = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    bio = models.TextField(blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    birthplace = models.CharField(max_length=150, blank=True)
+    grand_prix_entered = models.PositiveIntegerField(default=0)
+    career_points = models.PositiveIntegerField(default=0)
+    highest_race_finish = models.CharField(max_length=50, blank=True)
+    podiums = models.PositiveIntegerField(default=0)
+    highest_grid_position = models.CharField(max_length=50, blank=True)
+    pole_positions = models.PositiveIntegerField(default=0)
+    world_championships = models.PositiveIntegerField(default=0)
+    dnfs = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -142,3 +153,19 @@ class PasswordResetCode(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.code}"
+
+class HomeQuickLink(models.Model):
+    title = models.CharField(max_length=100)
+    url = models.CharField(max_length=255)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "title"]
+
+    def __str__(self):
+        return self.title
+

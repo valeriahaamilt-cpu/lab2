@@ -1,0 +1,93 @@
+{% extends "pages/base.html" %}
+
+{% block title %}{{ team.name }} — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="team-detail-hero team-{{ team.slug }}">
+    <div class="container team-detail-hero-layout">
+        <div>
+            <a href="{% url 'category_page' 'teams' %}" class="driver-back-link">← All teams</a>
+
+            {% if team.logo_url %}
+                <img class="team-detail-logo" src="{{ team.logo_url }}" alt="{{ team.name }}">
+            {% endif %}
+
+            <h1>{{ team.name }}</h1>
+
+            <div class="driver-meta">
+                <span>{{ team.country }}</span>
+                <span>{{ team.base }}</span>
+            </div>
+        </div>
+
+        <div class="team-detail-car">
+            {% if team.car_image_url %}
+                <img src="{{ team.car_image_url }}" alt="{{ team.name }}">
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="driver-detail-section">
+    <div class="container">
+
+        <div class="section-title">
+            <h2>Team Drivers</h2>
+        </div>
+
+        <div class="standings-table">
+            <div class="table-row table-head">
+                <span>POS.</span>
+                <span>DRIVER</span>
+                <span>NATIONALITY</span>
+                <span>TEAM</span>
+                <span>PTS.</span>
+            </div>
+
+            {% for driver in team_drivers %}
+                <a href="{% url 'driver_detail' driver.slug %}" class="table-row driver-row-link">
+                    <span>{{ driver.position }}</span>
+
+                    <span class="driver-name-cell">
+                        <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
+                        {{ driver.name }}
+                    </span>
+
+                    <span>{{ driver.country }}</span>
+
+                    <span>{{ driver.team.name }}</span>
+
+                    <span>{{ driver.points }}</span>
+                </a>
+            {% empty %}
+                <p>No drivers have been added for this team yet.</p>
+            {% endfor %}
+        </div>
+
+        <div class="section-title team-news-title">
+            <h2>Team News</h2>
+        </div>
+
+        <div class="article-grid">
+            {% for article in team_articles %}
+                <a href="{% url 'article_detail' article.slug %}" class="article-card">
+                    {% if article.image_url %}
+                        <img src="{{ article.image_url }}" alt="{{ article.title }}">
+                    {% endif %}
+
+                    <div>
+                        <span>{{ article.category.name }}</span>
+                        <h3>{{ article.title }}</h3>
+                        <p>{{ article.excerpt }}</p>
+                    </div>
+                </a>
+            {% empty %}
+                <p>No news for this team yet.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
