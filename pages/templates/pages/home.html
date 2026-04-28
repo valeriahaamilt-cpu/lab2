@@ -81,12 +81,12 @@
 
         <div class="f1-podium-grid">
             {% for driver in drivers|slice:":3" %}
-                <a href="{% url 'driver_detail' driver.slug %}" class="f1-podium-card podium-position-{{ forloop.counter }}"></a>
+                <a href="{% url 'driver_detail' driver.slug %}" class="f1-podium-card podium-position-{{ forloop.counter }}">
                     <div class="podium-image-wrap">
                         {% if driver.portrait_url %}
                             <img src="{{ driver.portrait_url }}" alt="{{ driver.name }}">
                         {% endif %}
-                    </a>
+                    </div>
 
                     <div class="podium-info">
                         <div class="podium-rank">
@@ -104,7 +104,7 @@
                         <p>{{ driver.team.name }}</p>
                         <strong>{{ driver.points }} <span>PTS</span></strong>
                     </div>
-                </div>
+                </a>
             {% empty %}
                 <p>No drivers have been added yet.</p>
             {% endfor %}
@@ -137,8 +137,10 @@
                             <td>{{ driver.country }}</td>
 
                             <td class="driver-team-cell">
-                                <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
-                                {{ driver.team.name }}
+                                <a href="{% url 'team_detail' driver.team.slug %}" class="team-name-link">
+                                    <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
+                                    {{ driver.team.name }}
+                                </a>
                             </td>
 
                             <td>{{ driver.points }}</td>
@@ -215,4 +217,5 @@
         </div>
     </div>
 </section>
+
 {% endblock %}

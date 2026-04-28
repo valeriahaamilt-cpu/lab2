@@ -115,11 +115,7 @@
                                             <div class="schedule-card-content">
                                                 <span class="schedule-round">Previous race</span>
                                                 <h4>{{ schedule_previous.name }}</h4>
-                                                <p>
-                                                    {{ schedule_previous.start_date|date:"d M" }}
-                                                    —
-                                                    {{ schedule_previous.end_date|date:"d M" }}
-                                                </p>
+                                                <p>{{ schedule_previous.start_date|date:"d M" }} — {{ schedule_previous.end_date|date:"d M" }}</p>
                                             </div>
                                         </a>
                                     {% else %}
@@ -141,11 +137,7 @@
                                             <div class="schedule-card-content">
                                                 <span class="schedule-round">Next race</span>
                                                 <h4>{{ schedule_next.name }}</h4>
-                                                <p>
-                                                    {{ schedule_next.start_date|date:"d M" }}
-                                                    —
-                                                    {{ schedule_next.end_date|date:"d M" }}
-                                                </p>
+                                                <p>{{ schedule_next.start_date|date:"d M" }} — {{ schedule_next.end_date|date:"d M" }}</p>
                                             </div>
                                         </a>
                                     {% else %}
@@ -168,11 +160,7 @@
                                                 <div class="schedule-card-content">
                                                     <span class="schedule-round">Upcoming</span>
                                                     <h4>{{ race.name }}</h4>
-                                                    <p>
-                                                        {{ race.start_date|date:"d M" }}
-                                                        —
-                                                        {{ race.end_date|date:"d M" }}
-                                                    </p>
+                                                    <p>{{ race.start_date|date:"d M" }} — {{ race.end_date|date:"d M" }}</p>
                                                 </div>
                                             </a>
                                         {% empty %}
@@ -193,6 +181,82 @@
                         </div>
                     </div>
 
+                {% elif category.slug == "drivers" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu drivers-mega-menu">
+                            <div class="container drivers-menu-inner">
+
+                                <div class="drivers-menu-grid">
+                                    {% for driver in drivers_menu %}
+                                        <a href="{% url 'driver_detail' driver.slug %}" class="drivers-menu-link">
+                                            <span class="drivers-menu-avatar initials-avatar team-{{ driver.team.slug }}">
+                                                {{ driver.initials|default:driver.name|slice:":2"|upper }}
+                                            </span>
+
+                                            <span>{{ driver.name }}</span>
+                                        </a>
+                                    {% empty %}
+                                        <p>No drivers have been added yet.</p>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="drivers-menu-footer">
+                                    <a href="{% url 'category_page' 'drivers' %}" class="drivers-menu-btn">
+                                        All Drivers
+                                    </a>
+
+                                    <a href="{% url 'category_page' 'results' %}" class="drivers-menu-btn">
+                                        Standings
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                {% elif category.slug == "teams" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu teams-mega-menu">
+                            <div class="container teams-menu-inner">
+
+                                <div class="teams-menu-grid">
+                                    {% for team in teams_menu %}
+                                        <a href="{% url 'team_detail' team.slug %}" class="teams-menu-card team-{{ team.slug }}">
+                                            <div class="teams-menu-header">
+                                                <span class="teams-menu-logo">
+                                                    {% if team.logo_url %}
+                                                        <img src="{{ team.logo_url }}" alt="{{ team.name }}">
+                                                    {% else %}
+                                                        <span class="teams-menu-dot"></span>
+                                                    {% endif %}
+                                                </span>
+                                                <strong>{{ team.name }}</strong>
+                                            </div>
+
+                                            {% if team.car_image_url %}
+                                                <img src="{{ team.car_image_url }}" alt="{{ team.name }}">
+                                            {% endif %}
+                                        </a>
+                                    {% empty %}
+                                        <p>No teams have been added yet.</p>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="teams-menu-footer">
+                                    <a href="{% url 'category_page' 'teams' %}" class="teams-menu-btn">
+                                        All Teams
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 {% else %}
                     <a href="{% url 'category_page' category.slug %}">
                         {{ category.name }}
@@ -232,19 +296,23 @@
 
 <footer class="site-footer">
     <div class="container footer-grid">
-        <div>
-            <h3>F1 Portal</h3>
-            <p>
-                Educational website about Formula 1, teams, drivers, news and season events.
+
+        <div class="footer-brand">
+            <h3><span>F1</span> Portal</h3>
+
+            <p class="footer-description">
+                Your Formula 1 hub for drivers, teams, race weekends and latest news.
             </p>
-            <p class="footer-note">
-                This website is an educational project and is not affiliated with Formula 1,
-                FIA, Ferrari, Mercedes, Red Bull Racing or any official racing organization.
+
+            <p class="footer-disclaimer">
+                This website was created as an educational project and is not affiliated with
+                Formula 1, FIA, Ferrari, Mercedes, Red Bull Racing or any official racing organization.
             </p>
         </div>
 
         <div>
             <h3>Navigation</h3>
+            <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'about' %}">About</a>
             <a href="{% url 'contact' %}">Contact</a>
         </div>
@@ -257,10 +325,11 @@
                 </a>
             {% endfor %}
         </div>
+
     </div>
 
     <div class="footer-bottom">
-        © 2026 F1 Portal. Django Lab 8.
+        © 2026 F1 Portal. Educational project.
     </div>
 </footer>
 

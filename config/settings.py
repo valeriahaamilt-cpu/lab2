@@ -30,6 +30,7 @@ ALLOWED_HOSTS = [
     "13.63.96.49",
     "127.0.0.1",
     "localhost",
+    "granny-elitism-feminine.ngrok-free.dev",
 ]
 CSRF_TRUSTED_ORIGINS = [
     "https://f1portal.pp.ua",
@@ -143,3 +144,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = "/profile/"
 LOGOUT_REDIRECT_URL = "/"
+
+NOWPAYMENTS_API_KEY = "85EECWM-1684JYG-P2APADC-N034TF7"
+NOWPAYMENTS_IPN_SECRET = "9XniPltv3tpD3aPGBEU5x/yV+fh6lpiz"

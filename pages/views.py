@@ -1,5 +1,13 @@
 ﻿import random
 from datetime import timedelta
+import hashlib
+import hmac
+import json
+import requests
+
+from django.http import HttpResponse, HttpResponseBadRequest
+from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 from django.conf import settings
 from django.contrib.auth import get_user_model, login, logout
@@ -8,6 +16,7 @@ from django.core.mail import send_mail
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+
 
 from .forms import (
     ForgotPasswordForm,
@@ -41,6 +50,10 @@ def get_common_context():
     today = timezone.localdate()
 
     categories = Category.objects.all().order_by("created_at")
+
+    drivers_menu = Driver.objects.select_related("team").order_by("name")
+
+    teams_menu = Team.objects.all().order_by("name")
 
     schedule_previous = GrandPrix.objects.filter(
         end_date__lt=today
@@ -76,6 +89,8 @@ def get_common_context():
         "schedule_upcoming": schedule_upcoming,
         "news_menu_articles": news_menu_articles,
         "news_menu_featured": news_menu_featured,
+        "drivers_menu": drivers_menu,
+        "teams_menu": teams_menu,
     }
 
 
@@ -126,6 +141,13 @@ def category_page(request, slug):
             "drivers": drivers,
         })
         return render(request, "pages/drivers.html", context)
+    
+    if slug == "results":
+        drivers = Driver.objects.select_related("team").order_by("position")
+        context.update({
+            "drivers": drivers,
+        })
+        return render(request, "pages/results.html", context)
 
     if slug == "teams":
         teams = Team.objects.all().order_by("name")
@@ -229,9 +251,7 @@ def grand_prix_detail(request, slug):
                 order.user = request.user
                 order.grand_prix = grand_prix
                 order.save()
-                order_success = True
-                order_form = TicketOrderForm(prefix="order")
-
+                return redirect("choose_payment", order_id=order.id)
     context = get_common_context()
     context.update({
         "page_title": f"{grand_prix.name} - F1 Portal",
@@ -487,3 +507,156 @@ def team_detail(request, slug):
     })
 
     return render(request, "pages/team_detail.html", context)
+
+@login_required
+def pay_order_crypto(request, order_id):
+    order = get_object_or_404(
+        TicketOrder.objects.select_related("grand_prix", "user"),
+        id=order_id,
+        user=request.user,
+    )
+
+    if order.status == "paid":
+        return redirect("profile")
+
+    callback_url = request.build_absolute_uri(reverse("nowpayments_ipn"))
+    success_url = request.build_absolute_uri(reverse("profile"))
+    cancel_url = request.build_absolute_uri(
+        reverse("grand_prix_detail", args=[order.grand_prix.slug])
+    )
+
+    payload = {
+        "price_amount": float(order.total_price),
+        "price_currency": "usd",
+        "order_id": str(order.id),
+        "order_description": f"Ticket for {order.grand_prix.name}",
+        "ipn_callback_url": callback_url,
+        "success_url": success_url,
+        "cancel_url": cancel_url,
+    }
+
+    headers = {
+        "x-api-key": settings.NOWPAYMENTS_API_KEY,
+        "Content-Type": "application/json",
+    }
+
+    response = requests.post(
+        "https://api.nowpayments.io/v1/invoice",
+        headers=headers,
+        json=payload,
+        timeout=20,
+    )
+
+    if response.status_code not in [200, 201]:
+        return HttpResponseBadRequest("Payment invoice was not created.")
+
+    data = response.json()
+
+    order.payment_id = str(data.get("id", ""))
+    order.payment_url = data.get("invoice_url", "")
+    order.status = "waiting"
+    order.save()
+
+    return redirect(order.payment_url)
+
+
+@csrf_exempt
+def nowpayments_ipn(request):
+    if request.method != "POST":
+        return HttpResponseBadRequest("Invalid request method.")
+
+    received_signature = request.headers.get("x-nowpayments-sig")
+
+    if not received_signature:
+        return HttpResponseBadRequest("Missing signature.")
+
+    try:
+        body_data = json.loads(request.body.decode("utf-8"))
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON.")
+
+    sorted_body = json.dumps(body_data, separators=(",", ":"), sort_keys=True)
+
+    calculated_signature = hmac.new(
+        settings.NOWPAYMENTS_IPN_SECRET.encode("utf-8"),
+        sorted_body.encode("utf-8"),
+        hashlib.sha512,
+    ).hexdigest()
+
+    if not hmac.compare_digest(calculated_signature, received_signature):
+        return HttpResponseBadRequest("Invalid signature.")
+
+    order_id = body_data.get("order_id")
+    payment_status = body_data.get("payment_status")
+
+    order = TicketOrder.objects.filter(id=order_id).first()
+
+    if not order:
+        return HttpResponseBadRequest("Order not found.")
+
+    if payment_status in ["finished", "confirmed", "sending"]:
+        order.status = "paid"
+    elif payment_status in ["failed", "expired", "refunded"]:
+        order.status = "failed"
+    else:
+        order.status = "waiting"
+
+    order.payment_id = str(body_data.get("payment_id", order.payment_id))
+    order.save()
+
+    return HttpResponse("OK")
+
+@login_required
+def choose_payment(request, order_id):
+    order = get_object_or_404(
+        TicketOrder.objects.select_related("grand_prix", "user"),
+        id=order_id,
+        user=request.user,
+    )
+
+    context = get_common_context()
+    context.update({
+        "page_title": "Choose Payment - F1 Portal",
+        "order": order,
+    })
+
+    return render(request, "pages/choose_payment.html", context)
+
+@login_required
+def card_payment(request, order_id):
+    order = get_object_or_404(
+        TicketOrder.objects.select_related("grand_prix", "user"),
+        id=order_id,
+        user=request.user,
+    )
+
+    error = ""
+
+    if request.method == "POST":
+        card_number = request.POST.get("card_number", "").replace(" ", "")
+        expiry = request.POST.get("expiry", "")
+        cvv = request.POST.get("cvv", "")
+        cardholder = request.POST.get("cardholder", "")
+
+        if not card_number.isdigit() or len(card_number) not in [16, 19]:
+            error = "Invalid card number."
+        elif not cvv.isdigit() or len(cvv) not in [3, 4]:
+            error = "Invalid CVV."
+        elif not expiry:
+            error = "Expiry date is required."
+        elif not cardholder.strip():
+            error = "Cardholder name is required."
+        else:
+            order.status = "paid"
+            order.payment_id = f"FAKE-CARD-{order.id}"
+            order.save()
+            return redirect("profile")
+
+    context = get_common_context()
+    context.update({
+        "page_title": "Card Payment - F1 Portal",
+        "order": order,
+        "error": error,
+    })
+
+    return render(request, "pages/card_payment.html", context)
