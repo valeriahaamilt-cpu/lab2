@@ -43,10 +43,10 @@
                 {% endif %}
             </div>
 
-            <button class="buy-ticket-btn" disabled>Buy Ticket</button>
-            <p class="buy-note">This button is inactive because this is a laboratory project.</p>
+            <a href="#ticket-order" class="buy-ticket-btn">Buy Ticket</a>
+            <p class="buy-note">Click the button to place a ticket order.</p>
 
-            <div class="form-card order-card">
+            <div class="form-card order-card" id="ticket-order">
                 <h3>Place an Order</h3>
 
                 {% if order_success %}

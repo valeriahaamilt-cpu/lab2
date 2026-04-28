@@ -12,38 +12,30 @@
     </div>
 </section>
 
-<section class="standings-section">
+<section class="simple-page">
     <div class="container">
         <div class="section-title">
-            <h2>Driver Standings</h2>
+            <h2>Drivers</h2>
         </div>
 
-        <div class="standings-table">
-            <div class="table-row table-head">
-                <span>POS.</span>
-                <span>DRIVER</span>
-                <span>NATIONALITY</span>
-                <span>TEAM</span>
-                <span>PTS.</span>
-            </div>
-
+        <div class="driver-grid">
             {% for driver in drivers %}
-                <a href="{% url 'driver_detail' driver.slug %}" class="table-row driver-row-link">
-                    <span>{{ driver.position }}</span>
+                <a href="{% url 'driver_detail' driver.slug %}" class="driver-card team-{{ driver.team.slug }}">
 
-                    <span class="driver-name-cell">
-                        <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
-                        {{ driver.name }}
-                    </span>
+                    <div class="driver-card-image">
+                        {% if driver.portrait_url %}
+                            <img src="{{ driver.portrait_url }}" alt="{{ driver.name }}">
+                        {% endif %}
+                    </div>
 
-                    <span>{{ driver.country }}</span>
+                    <div class="driver-card-content">
+                        <span class="driver-card-number">#{{ driver.number }}</span>
+                        <h3>{{ driver.name }}</h3>
+                        <p>{{ driver.team.name }}</p>
+                        <p>{{ driver.country }}</p>
+                        <strong>{{ driver.points }} PTS</strong>
+                    </div>
 
-                    <span class="driver-team-cell">
-                        <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
-                        {{ driver.team.name }}
-                    </span>
-
-                    <span>{{ driver.points }}</span>
                 </a>
             {% empty %}
                 <p>No drivers have been added yet.</p>

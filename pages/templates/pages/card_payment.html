@@ -1,0 +1,66 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Card Payment — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="category-hero">
+    <div class="container">
+        <span class="tag">PAYMENT</span>
+        <h1>Card Payment</h1>
+        <p>{{ order.grand_prix.name }} — ${{ order.total_price }}</p>
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container payment-layout">
+
+        <div class="form-card payment-card">
+            <h2>Enter card details</h2>
+
+            {% if error %}
+                <p class="error-message">{{ error }}</p>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <label>Cardholder name</label>
+                <input type="text" name="cardholder" class="form-input" placeholder="Valeriia Student">
+
+                <label>Card number</label>
+                <input type="text" name="card_number" class="form-input" placeholder="4242 4242 4242 4242">
+
+                <div class="payment-row">
+                    <div>
+                        <label>Expiry date</label>
+                        <input type="text" name="expiry" class="form-input" placeholder="12/28">
+                    </div>
+
+                    <div>
+                        <label>CVV</label>
+                        <input type="password" name="cvv" class="form-input" placeholder="123">
+                    </div>
+                </div>
+
+                <button type="submit" class="form-btn">Pay now</button>
+            </form>
+
+            <p class="buy-note">
+                This is a student project payment simulation. No real money is charged.
+            </p>
+        </div>
+
+        <div class="detail-card payment-summary">
+            <h2>Order summary</h2>
+            <p><strong>Grand Prix:</strong> {{ order.grand_prix.name }}</p>
+            <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+            <p><strong>Ticket price:</strong> ${{ order.grand_prix.ticket_price }}</p>
+            <p><strong>Total:</strong> ${{ order.total_price }}</p>
+            <p><strong>Status:</strong> {{ order.status }}</p>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

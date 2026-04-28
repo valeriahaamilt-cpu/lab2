@@ -20,4 +20,9 @@ urlpatterns = [
 
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
+    path("order/<int:order_id>/pay/", views.pay_order_crypto, name="pay_order_crypto"),
+    path("payments/nowpayments/ipn/", views.nowpayments_ipn, name="nowpayments_ipn"),
+    path("order/<int:order_id>/payment/", views.choose_payment, name="choose_payment"),
+    path("order/<int:order_id>/card-payment/", views.card_payment, name="card_payment"),
+    path("order/<int:order_id>/pay/", views.pay_order_crypto, name="pay_order_crypto"),
 ]

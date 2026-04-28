@@ -50,6 +50,7 @@ class Driver(models.Model):
     pole_positions = models.PositiveIntegerField(default=0)
     world_championships = models.PositiveIntegerField(default=0)
     dnfs = models.PositiveIntegerField(default=0)
+    initials = models.CharField(max_length=5, blank=True)
 
     def __str__(self):
         return self.name
@@ -129,17 +130,39 @@ class GrandPrixRating(models.Model):
         return f"{self.grand_prix.name} - {self.score}"
 
 class TicketOrder(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("waiting", "Waiting for payment"),
+        ("paid", "Paid"),
+        ("failed", "Failed"),
+        ("cancelled", "Cancelled"),
+    ]
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ticket_orders")
     grand_prix = models.ForeignKey(GrandPrix, on_delete=models.CASCADE, related_name="orders")
+
     full_name = models.CharField(max_length=150)
     email = models.EmailField()
     quantity = models.PositiveIntegerField(default=1)
+
+    status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="pending"
+    )
+
+    payment_id = models.CharField(max_length=255, blank=True)
+    payment_url = models.URLField(blank=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    def __str__(self):
-        return f"{self.full_name} - {self.grand_prix.name}"
+    @property
+    def total_price(self):
+        return self.quantity * self.grand_prix.ticket_price
 
+    def __str__(self):
+        return f"{self.full_name} - {self.grand_prix.name} ({self.status})"
 
 class PasswordResetCode(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="password_reset_codes")
