@@ -1243,8 +1243,20 @@ button,
 }
 
 .back-link {
+    display: inline-block;
     margin-top: 18px;
+    background: var(--red);
     padding: 12px 18px;
+    border-radius: 999px;
+    font-weight: 900;
+    transition: transform 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.back-link:hover {
+    transform: translateY(-3px) scale(1.04);
+    background: #ffffff;
+    color: var(--red);
+    box-shadow: 0 12px 26px rgba(225, 6, 0, 0.35);
 }
 
 .buy-ticket-btn {
@@ -1801,4 +1813,92 @@ select {
     background: #ffffff;
     color: #11111a;
     border-color: #ffffff;
+}
+
+.schedule-page-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.schedule-page-card {
+    display: block;
+    background: #000;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.schedule-page-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 38px rgba(0, 0, 0, 0.42);
+}
+
+.schedule-page-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+}
+
+.schedule-page-content {
+    padding: 20px;
+}
+
+.schedule-page-content span {
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.schedule-page-content h3 {
+    margin: 10px 0;
+    font-size: 26px;
+    text-transform: uppercase;
+}
+
+.schedule-page-content p {
+    color: var(--muted);
+    margin: 0 0 10px;
+}
+
+.schedule-page-content strong {
+    color: #ffffff;
+}
+
+@media (max-width: 1100px) {
+    .schedule-page-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.auth-card input[type="password"],
+.auth-card input[type="text"],
+.auth-card input[type="email"] {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #2c2c35;
+    background: var(--panel);
+    color: #ffffff;
+    font-size: 15px;
+    outline: none;
+    margin-top: 8px;
+}
+
+.auth-card input[type="password"]:focus,
+.auth-card input[type="text"]:focus,
+.auth-card input[type="email"]:focus {
+    border-color: var(--red);
+    box-shadow: 0 0 0 3px rgba(225, 6, 0, 0.18);
+}
+
+.auth-card .helptext,
+.auth-card ul {
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.auth-card label {
+    font-weight: 800;
 }

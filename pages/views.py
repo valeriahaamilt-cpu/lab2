@@ -141,7 +141,14 @@ def category_page(request, slug):
             "drivers": drivers,
         })
         return render(request, "pages/drivers.html", context)
-    
+
+    if slug == "schedule":
+        races = GrandPrix.objects.all().order_by("start_date")
+        context.update({
+            "races": races,
+        })
+        return render(request, "pages/schedule.html", context)
+        
     if slug == "results":
         drivers = Driver.objects.select_related("team").order_by("position")
         context.update({

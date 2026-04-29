@@ -20,7 +20,7 @@
 
         <div class="team-grid">
             {% for team in teams %}
-                <article class="team-card">
+                <a href="{% url 'team_detail' team.slug %}" class="team-card team-card-link team-{{ team.slug }}">
                     {% if team.logo_url %}
                         <img src="{{ team.logo_url }}" alt="{{ team.name }}">
                     {% endif %}
@@ -31,7 +31,7 @@
                     {% if team.car_image_url %}
                         <img class="car-img" src="{{ team.car_image_url }}" alt="{{ team.name }}">
                     {% endif %}
-                </article>
+                </a>
             {% empty %}
                 <p>No teams have been added yet.</p>
             {% endfor %}
