@@ -1,0 +1,42 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Schedule — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="category-hero">
+    <div class="container">
+        <span class="tag">SCHEDULE</span>
+        <h1>2026 Schedule</h1>
+        <a href="{% url 'home' %}" class="back-link">Back to home</a>
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container">
+        <div class="section-title">
+            <h2>Race Calendar</h2>
+        </div>
+
+        <div class="schedule-page-grid">
+            {% for race in races %}
+                <a href="{% url 'grand_prix_detail' race.slug %}" class="schedule-page-card">
+                    {% if race.image_url %}
+                        <img src="{{ race.image_url }}" alt="{{ race.name }}">
+                    {% endif %}
+
+                    <div class="schedule-page-content">
+                        <span>{{ race.start_date|date:"d M" }} — {{ race.end_date|date:"d M" }}</span>
+                        <h3>{{ race.name }}</h3>
+                        <p>{{ race.city }}, {{ race.country }}</p>
+                        <strong>{{ race.circuit }}</strong>
+                    </div>
+                </a>
+            {% empty %}
+                <p>No races have been added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

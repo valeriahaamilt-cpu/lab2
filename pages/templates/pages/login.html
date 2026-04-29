@@ -1,0 +1,30 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Log In — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="simple-page">
+    <div class="container auth-page">
+        <div class="form-card auth-card">
+            <h1>Log In</h1>
+
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="form-btn">Log In</button>
+            </form>
+
+            <p class="auth-link-text">
+                Don’t have an account?
+                <a href="{% url 'register' %}">Sign up</a>
+            </p>
+
+            <p class="auth-link-text">
+                <a href="{% url 'forgot_password' %}">Forgot your password?</a>
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

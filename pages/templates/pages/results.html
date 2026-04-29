@@ -1,0 +1,65 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Results — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="category-hero">
+    <div class="container">
+        <span class="tag">RESULTS</span>
+        <h1>2026 Results</h1>
+        <a href="{% url 'home' %}" class="back-link">Back to home</a>
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container">
+        <div class="section-title">
+            <h2>Driver Standings</h2>
+        </div>
+
+        <table class="standings-table">
+            <thead>
+                <tr>
+                    <th>POS.</th>
+                    <th>DRIVER</th>
+                    <th>NATIONALITY</th>
+                    <th>TEAM</th>
+                    <th>PTS.</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for driver in drivers %}
+                    <tr>
+                        <td>{{ driver.position }}</td>
+
+                        <td class="driver-name-cell">
+                            <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
+                            <a href="{% url 'driver_detail' driver.slug %}" class="driver-name-link">
+                                {{ driver.name }}
+                            </a>
+                        </td>
+
+                        <td>{{ driver.country }}</td>
+
+                        <td class="driver-team-cell">
+                            <a href="{% url 'team_detail' driver.team.slug %}" class="team-name-link">
+                                <span class="team-dot team-dot-{{ driver.team.slug }}"></span>
+                                {{ driver.team.name }}
+                            </a>
+                        </td>
+
+                        <td>{{ driver.points }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="5">No drivers have been added yet.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+{% endblock %}

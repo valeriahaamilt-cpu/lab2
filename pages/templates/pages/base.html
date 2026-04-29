@@ -1,34 +1,266 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="uk">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{ page_title }}</title>
+    <title>{% block title %}{{ page_title|default:"F1 Portal" }}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'pages/css/style.css' %}">
 </head>
 <body>
 
 <header class="site-header">
-    <div class="top-bar">
-        <div class="container top-bar-inner">
-            <span>Race Series</span>
-            <span>F1 Portal — навчальний сайт</span>
-        </div>
-    </div>
-
     <div class="container nav-inner">
         <a href="{% url 'home' %}" class="logo">
             <span>F1</span> Portal
         </a>
 
         <nav class="main-nav">
-            <a href="{% url 'home' %}">Головна</a>
-
             {% for category in categories %}
-                <a href="{% url 'category_page' category.slug %}">
-                    {{ category.name }}
-                </a>
+
+                {% if category.slug == "news" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu news-mega-menu">
+                            <div class="container news-menu-inner">
+
+                                <div class="news-menu-left">
+                                    <div class="news-menu-tags">
+                                        
+                                        
+                                    </div>
+
+                                    <h3>News</h3>
+
+                                    <div class="news-menu-grid">
+                                        {% for article in news_menu_articles %}
+                                            <a href="{% url 'article_detail' article.slug %}" class="news-menu-card">
+                                                {% if article.image_url %}
+                                                    <img src="{{ article.image_url }}" alt="{{ article.title }}">
+                                                {% endif %}
+
+                                                <div class="news-menu-card-content">
+                                                    {% if article.is_locked %}
+                                                        <span class="small-tag">UNLOCKED</span>
+                                                    {% else %}
+                                                        <span class="small-tag">{{ article.category.name }}</span>
+                                                    {% endif %}
+
+                                                    <h4>{{ article.title }}</h4>
+                                                    <p>{{ article.created_at|date:"F d, Y" }}</p>
+                                                </div>
+                                            </a>
+                                        {% empty %}
+                                            <p>No news has been added yet.</p>
+                                        {% endfor %}
+                                    </div>
+
+                                    <a href="{% url 'category_page' 'news' %}" class="mega-more-btn">
+                                        More news
+                                    </a>
+                                </div>
+
+                                <div class="news-menu-right">
+                                    <h3>Featured</h3>
+
+                                    {% if news_menu_featured %}
+                                        <a href="{% url 'article_detail' news_menu_featured.slug %}" class="news-featured-card">
+                                            {% if news_menu_featured.image_url %}
+                                                <img src="{{ news_menu_featured.image_url }}" alt="{{ news_menu_featured.title }}">
+                                            {% endif %}
+
+                                            <div>
+                                                {% if news_menu_featured.is_locked %}
+                                                    <span class="small-tag">UNLOCKED</span>
+                                                {% else %}
+                                                    <span class="small-tag">{{ news_menu_featured.category.name }}</span>
+                                                {% endif %}
+
+                                                <h4>{{ news_menu_featured.title }}</h4>
+                                                <p>{{ news_menu_featured.excerpt }}</p>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <p>No featured news yet.</p>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% elif category.slug == "schedule" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu schedule-mega-menu">
+                            <div class="container schedule-menu-inner">
+
+                                <div class="schedule-menu-column">
+                                    <h3>Previous</h3>
+
+                                    {% if schedule_previous %}
+                                        <a href="{% url 'grand_prix_detail' schedule_previous.slug %}" class="schedule-card small-card">
+                                            {% if schedule_previous.image_url %}
+                                                <img src="{{ schedule_previous.image_url }}" alt="{{ schedule_previous.name }}">
+                                            {% endif %}
+
+                                            <div class="schedule-card-content">
+                                                <span class="schedule-round">Previous race</span>
+                                                <h4>{{ schedule_previous.name }}</h4>
+                                                <p>{{ schedule_previous.start_date|date:"d M" }} — {{ schedule_previous.end_date|date:"d M" }}</p>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <div class="schedule-empty">
+                                            <p>No previous race yet.</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="schedule-menu-column">
+                                    <h3>Next</h3>
+
+                                    {% if schedule_next %}
+                                        <a href="{% url 'grand_prix_detail' schedule_next.slug %}" class="schedule-card large-card">
+                                            {% if schedule_next.image_url %}
+                                                <img src="{{ schedule_next.image_url }}" alt="{{ schedule_next.name }}">
+                                            {% endif %}
+
+                                            <div class="schedule-card-content">
+                                                <span class="schedule-round">Next race</span>
+                                                <h4>{{ schedule_next.name }}</h4>
+                                                <p>{{ schedule_next.start_date|date:"d M" }} — {{ schedule_next.end_date|date:"d M" }}</p>
+                                            </div>
+                                        </a>
+                                    {% else %}
+                                        <div class="schedule-empty">
+                                            <p>No next race yet.</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <div class="schedule-menu-column">
+                                    <h3>Upcoming</h3>
+
+                                    <div class="upcoming-grid">
+                                        {% for race in schedule_upcoming %}
+                                            <a href="{% url 'grand_prix_detail' race.slug %}" class="schedule-card small-card">
+                                                {% if race.image_url %}
+                                                    <img src="{{ race.image_url }}" alt="{{ race.name }}">
+                                                {% endif %}
+
+                                                <div class="schedule-card-content">
+                                                    <span class="schedule-round">Upcoming</span>
+                                                    <h4>{{ race.name }}</h4>
+                                                    <p>{{ race.start_date|date:"d M" }} — {{ race.end_date|date:"d M" }}</p>
+                                                </div>
+                                            </a>
+                                        {% empty %}
+                                            <div class="schedule-empty">
+                                                <p>No upcoming races yet.</p>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+
+                                <div class="schedule-menu-footer">
+                                    <a href="{% url 'category_page' 'schedule' %}" class="full-schedule-btn">
+                                        Full Schedule
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                {% elif category.slug == "drivers" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu drivers-mega-menu">
+                            <div class="container drivers-menu-inner">
+
+                                <div class="drivers-menu-grid">
+                                    {% for driver in drivers_menu %}
+                                        <a href="{% url 'driver_detail' driver.slug %}" class="drivers-menu-link">
+                                            <span class="drivers-menu-avatar initials-avatar team-{{ driver.team.slug }}">
+                                                {{ driver.initials|default:driver.name|slice:":2"|upper }}
+                                            </span>
+
+                                            <span>{{ driver.name }}</span>
+                                        </a>
+                                    {% empty %}
+                                        <p>No drivers have been added yet.</p>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="drivers-menu-footer">
+                                    <a href="{% url 'category_page' 'drivers' %}" class="drivers-menu-btn">
+                                        All Drivers
+                                    </a>
+
+                                    <a href="{% url 'category_page' 'results' %}" class="drivers-menu-btn">
+                                        Standings
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                {% elif category.slug == "teams" %}
+                    <div class="nav-item has-mega-menu">
+                        <a href="{% url 'category_page' category.slug %}" class="nav-link">
+                            {{ category.name }}
+                        </a>
+
+                        <div class="mega-menu teams-mega-menu">
+                            <div class="container teams-menu-inner">
+
+                                <div class="teams-menu-grid">
+                                    {% for team in teams_menu %}
+                                        <a href="{% url 'team_detail' team.slug %}" class="teams-menu-card team-{{ team.slug }}">
+                                            <div class="teams-menu-header">
+                                                <span class="teams-menu-logo">
+                                                    {% if team.logo_url %}
+                                                        <img src="{{ team.logo_url }}" alt="{{ team.name }}">
+                                                    {% else %}
+                                                        <span class="teams-menu-dot"></span>
+                                                    {% endif %}
+                                                </span>
+                                                <strong>{{ team.name }}</strong>
+                                            </div>
+
+                                            {% if team.car_image_url %}
+                                                <img src="{{ team.car_image_url }}" alt="{{ team.name }}">
+                                            {% endif %}
+                                        </a>
+                                    {% empty %}
+                                        <p>No teams have been added yet.</p>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="teams-menu-footer">
+                                    <a href="{% url 'category_page' 'teams' %}" class="teams-menu-btn">
+                                        All Teams
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <a href="{% url 'category_page' category.slug %}">
+                        {{ category.name }}
+                    </a>
+                {% endif %}
+
             {% endfor %}
 
             <a href="{% url 'about' %}">About</a>
@@ -36,11 +268,24 @@
         </nav>
 
         <div class="auth-buttons">
-            <button class="sign-btn">Sign in</button>
-            <button class="subscribe-btn">Subscribe</button>
+            {% if user.is_authenticated %}
+                <a href="{% url 'profile' %}" class="sign-btn">My Account</a>
+                <a href="{% url 'logout' %}" class="subscribe-btn">Log out</a>
+            {% else %}
+                <a href="{% url 'login' %}" class="sign-btn">Log in</a>
+                <a href="{% url 'register' %}" class="subscribe-btn">Sign up</a>
+            {% endif %}
         </div>
     </div>
 </header>
+
+{% if messages %}
+    <div class="container messages">
+        {% for message in messages %}
+            <p class="message {{ message.tags }}">{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
 
 <main>
     {% block content %}
@@ -49,30 +294,40 @@
 
 <footer class="site-footer">
     <div class="container footer-grid">
-        <div>
-            <h3>F1 Portal</h3>
-            <p>Навчальний сайт про Formula 1, команди, пілотів, новини та події сезону.</p>
+
+        <div class="footer-brand">
+            <h3><span>F1</span> Portal</h3>
+
+            <p class="footer-description">
+                Your Formula 1 hub for drivers, teams, race weekends and latest news.
+            </p>
+
+            <p class="footer-disclaimer">
+                This website was created as an educational project and is not affiliated with
+                Formula 1, FIA, Ferrari, Mercedes, Red Bull Racing or any official racing organization.
+            </p>
         </div>
 
         <div>
-            <h3>Навігація</h3>
-            <a href="{% url 'home' %}">Головна</a>
+            <h3>Navigation</h3>
+            <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'about' %}">About</a>
             <a href="{% url 'contact' %}">Contact</a>
         </div>
 
         <div>
-            <h3>Категорії</h3>
+            <h3>Categories</h3>
             {% for category in categories %}
                 <a href="{% url 'category_page' category.slug %}">
                     {{ category.name }}
                 </a>
             {% endfor %}
         </div>
+
     </div>
 
     <div class="footer-bottom">
-        © 2026 F1 Portal. Django Lab 5.
+        © 2026 F1 Portal. Educational project.
     </div>
 </footer>
 

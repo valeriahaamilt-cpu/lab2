@@ -24,9 +24,22 @@ SECRET_KEY = 'django-insecure-^&x38du#!4-=^_ga7dkb)62sy9n+=*n0!a-217tk*ro+ov16cf
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    "f1portal.pp.ua",
+    "www.f1portal.pp.ua",
+    "13.63.96.49",
+    "127.0.0.1",
+    "localhost",
+    "granny-elitism-feminine.ngrok-free.dev",
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://f1portal.pp.ua",
+    "https://www.f1portal.pp.ua",
+    "http://f1portal.pp.ua",
+    "http://www.f1portal.pp.ua",
+]
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Application definition
 
@@ -120,4 +133,17 @@ STATIC_URL = 'static/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+EMAIL_BACKEND = "pages.email_backend.EmailBackend"
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "formula1.portall@gmail.com"
+EMAIL_HOST_PASSWORD = "oncghtnotnlctncg"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+LOGIN_URL = "/login/"
+LOGIN_REDIRECT_URL = "/profile/"
+LOGOUT_REDIRECT_URL = "/"
+
+NOWPAYMENTS_API_KEY = "85EECWM-1684JYG-P2APADC-N034TF7"
+NOWPAYMENTS_IPN_SECRET = "9XniPltv3tpD3aPGBEU5x/yV+fh6lpiz"

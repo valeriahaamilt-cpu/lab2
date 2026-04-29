@@ -1,0 +1,47 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Drivers — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="category-hero">
+    <div class="container">
+        <span class="tag">DRIVERS</span>
+        <h1>2026 Drivers</h1>
+        <a href="{% url 'home' %}" class="back-link">Back to home</a>
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container">
+        <div class="section-title">
+            <h2>Drivers</h2>
+        </div>
+
+        <div class="driver-grid">
+            {% for driver in drivers %}
+                <a href="{% url 'driver_detail' driver.slug %}" class="driver-card team-{{ driver.team.slug }}">
+
+                    <div class="driver-card-image">
+                        {% if driver.portrait_url %}
+                            <img src="{{ driver.portrait_url }}" alt="{{ driver.name }}">
+                        {% endif %}
+                    </div>
+
+                    <div class="driver-card-content">
+                        <span class="driver-card-number">#{{ driver.number }}</span>
+                        <h3>{{ driver.name }}</h3>
+                        <p>{{ driver.team.name }}</p>
+                        <p>{{ driver.country }}</p>
+                        <strong>{{ driver.points }} PTS</strong>
+                    </div>
+
+                </a>
+            {% empty %}
+                <p>No drivers have been added yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}

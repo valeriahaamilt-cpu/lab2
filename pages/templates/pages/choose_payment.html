@@ -1,0 +1,33 @@
+{% extends "pages/base.html" %}
+
+{% block title %}Choose Payment — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="category-hero">
+    <div class="container">
+        <span class="tag">PAYMENT</span>
+        <h1>Choose Payment Method</h1>
+        <p>{{ order.grand_prix.name }} — ${{ order.total_price }}</p>
+    </div>
+</section>
+
+<section class="simple-page">
+    <div class="container payment-choice-layout">
+
+        <a href="{% url 'pay_order_crypto' order.id %}" class="payment-choice-card">
+            <h2>Pay with Crypto</h2>
+            <p>Pay using USDT, BTC or another supported cryptocurrency through NOWPayments.</p>
+            <span>Continue with crypto</span>
+        </a>
+
+        <a href="{% url 'card_payment' order.id %}" class="payment-choice-card">
+            <h2>Pay with Card</h2>
+            <p>Student project card checkout simulation. No real money is charged.</p>
+            <span>Continue with card</span>
+        </a>
+
+    </div>
+</section>
+
+{% endblock %}

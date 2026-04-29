@@ -1,0 +1,59 @@
+
+{% extends "pages/base.html" %}
+
+{% block title %}{{ article.title }} — F1 Portal{% endblock %}
+
+{% block content %}
+
+<section class="article-detail-hero">
+    <div class="container">
+        <span class="tag">{{ article.category.name }}</span>
+        <h1>{{ article.title }}</h1>
+        <p>{{ article.excerpt }}</p>
+        <a href="{% url 'category_page' article.category.slug %}" class="back-link">
+            Back to {{ article.category.name }}
+        </a>
+    </div>
+</section>
+
+<section class="article-detail-section">
+    <div class="container article-detail-layout">
+        <article class="article-detail-card">
+            {% if article.image_url %}
+                <img src="{{ article.image_url }}" alt="{{ article.title }}">
+            {% endif %}
+
+            <div class="article-detail-content">
+                <p class="article-meta">
+                    Published: {{ article.created_at|date:"F d, Y" }}
+                    {% if article.team %} · Team: {{ article.team.name }}{% endif %}
+                    {% if article.driver %} · Driver: {{ article.driver.name }}{% endif %}
+                </p>
+
+                <div class="article-body">
+                    {{ article.content|linebreaks }}
+                </div>
+            </div>
+        </article>
+
+        <aside class="related-news">
+            <h2>Related News</h2>
+
+            {% for related in related_articles %}
+                <a href="{% url 'article_detail' related.slug %}" class="related-news-card">
+                    {% if related.image_url %}
+                        <img src="{{ related.image_url }}" alt="{{ related.title }}">
+                    {% endif %}
+                    <div>
+                        <span>{{ related.category.name }}</span>
+                        <h3>{{ related.title }}</h3>
+                    </div>
+                </a>
+            {% empty %}
+                <p>No related news yet.</p>
+            {% endfor %}
+        </aside>
+    </div>
+</section>
+
+{% endblock %}

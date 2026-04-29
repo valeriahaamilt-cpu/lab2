@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.conf import settings
+from django.utils import timezone
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -19,7 +20,7 @@ class Team(models.Model):
     base = models.CharField(max_length=150, blank=True)
     logo_url = models.URLField(blank=True)
     car_image_url = models.URLField(blank=True)
-    team_color = models.CharField(max_length=20, blank=True, help_text="Наприклад: #e10600")
+    team_color = models.CharField(max_length=20, blank=True, help_text="Example: #e10600")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -38,6 +39,18 @@ class Driver(models.Model):
     position = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    bio = models.TextField(blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    birthplace = models.CharField(max_length=150, blank=True)
+    grand_prix_entered = models.PositiveIntegerField(default=0)
+    career_points = models.PositiveIntegerField(default=0)
+    highest_race_finish = models.CharField(max_length=50, blank=True)
+    podiums = models.PositiveIntegerField(default=0)
+    highest_grid_position = models.CharField(max_length=50, blank=True)
+    pole_positions = models.PositiveIntegerField(default=0)
+    world_championships = models.PositiveIntegerField(default=0)
+    dnfs = models.PositiveIntegerField(default=0)
+    initials = models.CharField(max_length=5, blank=True)
 
     def __str__(self):
         return self.name
@@ -115,3 +128,67 @@ class GrandPrixRating(models.Model):
 
     def __str__(self):
         return f"{self.grand_prix.name} - {self.score}"
+
+class TicketOrder(models.Model):
+    PAYMENT_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("waiting", "Waiting for payment"),
+        ("paid", "Paid"),
+        ("failed", "Failed"),
+        ("cancelled", "Cancelled"),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="ticket_orders")
+    grand_prix = models.ForeignKey(GrandPrix, on_delete=models.CASCADE, related_name="orders")
+
+    full_name = models.CharField(max_length=150)
+    email = models.EmailField()
+    quantity = models.PositiveIntegerField(default=1)
+
+    status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="pending"
+    )
+
+    payment_id = models.CharField(max_length=255, blank=True)
+    payment_url = models.URLField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def total_price(self):
+        return self.quantity * self.grand_prix.ticket_price
+
+    def __str__(self):
+        return f"{self.full_name} - {self.grand_prix.name} ({self.status})"
+
+class PasswordResetCode(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="password_reset_codes")
+    code = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField()
+    is_used = models.BooleanField(default=False)
+
+    def is_expired(self):
+        return timezone.now() > self.expires_at
+
+    def __str__(self):
+        return f"{self.user.username} - {self.code}"
+
+class HomeQuickLink(models.Model):
+    title = models.CharField(max_length=100)
+    url = models.CharField(max_length=255)
+    order = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["order", "title"]
+
+    def __str__(self):
+        return self.title
+
